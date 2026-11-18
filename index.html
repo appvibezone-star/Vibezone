@@ -1,42 +1,92 @@
-<!DOCTYPE html>
-<html>
+!DOCTYPE html>
+<html lang="en">
 <head>
-<title>VibeZone - Naija First</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VibeZone - Naija First Social App</title>
 <style>
-body{font-family:Arial;background:#111;color:white;text-align:center;margin:0;padding:20px}
-h1{font-size:40px}
-.card{background:white;color:black;border-radius:15px;padding:15px;margin:15px 0;text-align:left}
-button{background:#ff0066;color:white;border:none;padding:12px 18px;border-radius:20px;font-size:16px;margin:5px}
-input{width:80%;padding:12px;border-radius:20px;border:none;margin:10px}
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#0f0f1a;color:white;padding:15px}
+h1{text-align:center;font-size:32px}
+h1 span{color:#00ff88}
+p.sub{text-align:center;color:#bbb;margin-top:-10px}
+.card{background:#1e1e30;padding:16px;border-radius:16px;margin:15px 0;border:1px solid #333}
+h2{margin:0 0 12px 0;font-size:19px}
+button{border:none;padding:12px 14px;border-radius:20px;font-weight:bold;cursor:pointer;margin:4px 2px;font-size:14px}
+.vibe-btn{background:#2a2a45;color:white}
+.vibe-btn:active{background:#00ff88;color:black}
+.send{background:#00ff88;color:black;width:100%;margin-top:10px;padding:13px}
+input{width:100%;padding:13px;border-radius:10px;border:none;background:#2a2a45;color:white;outline:none;margin-top:8px}
+.post{background:#2a2a45;padding:12px;border-radius:12px;margin:8px 0}
+small{color:#aaa}
+.top{display:flex;gap:8px;justify-content:center;margin:10px 0}
+.top button{background:#00ff88;color:black}
 </style>
 </head>
 <body>
-<h1>🔥 VibeZone</h1>
-<p>Welcome to Naija First Social App 🇳🇬</p>
+
+<h1>🔥 Vibe<span>Zone</span></h1>
+<p class="sub">Welcome to Naija First Social App 🇳🇬</p>
+
+<div class="top">
+<button onclick="alert('Welcome to VibeZone!')">🏠 Home</button>
+<button onclick="alert('Profile coming soon!')">👤 Profile</button>
+<button onclick="alert('Notifications: 3 new vibes!')">🔔 Alerts</button>
+</div>
+
 <div class="card">
 <h2>What's your vibe today?</h2>
-<button onclick="postVibe('😎 Chill')">😎 Chill</button>
-<button onclick="postVibe('🎉 Party')">🎉 Party</button>
-<button onclick="postVibe('❤️ Love')">❤️ Love</button>
-<button onclick="voiceNote()">🎤 Voice Note</button>
+<button class="vibe-btn" onclick="postVibe('😎 Chill')">😎 Chill</button>
+<button class="vibe-btn" onclick="postVibe('🎉 Party')">🎉 Party</button>
+<button class="vibe-btn" onclick="postVibe('❤️ Love')">❤️ Love</button>
+<button class="vibe-btn" onclick="postVibe('🔥 Hustle')">🔥 Hustle</button>
+<button class="vibe-btn" onclick="postVibe('😂 Funny')">😂 Funny</button>
+<button class="vibe-btn" onclick="voiceNote()">🎤 Voice Note</button>
 </div>
+
 <div class="card">
 <h2>📱 Status Feed</h2>
-<div id="feed"><p><b>@LagosBoy:</b> Lagos no dey sleep! 🔥</p></div>
+<div id="feed">
+<div class="post"><b>@LagosBoy:</b> Lagos no dey carry last! 🔥<br><small>2 mins ago</small></div>
+<div class="post"><b>@AbujaQueen:</b> Who dey Abuja today? Make we link up 💃<br><small>10 mins ago</small></div>
+<div class="post"><b>@NaijaStar:</b> New music don drop o! 🎵<br><small>25 mins ago</small></div>
 </div>
+</div>
+
 <div class="card">
 <h2>💬 Chat</h2>
-<div id="chatBox"><p><b>You:</b> Hello VibeZone!</p></div>
-<input id="chatInput" placeholder="Type message...">
-<br>
-<button onclick="sendChat()">Send</button>
+<div id="chatBox">
+<div class="post"><b>You:</b> Hello VibeZone!</div>
 </div>
-<p>Made with ❤️ in Lagos</p>
+<input id="chatInput" placeholder="Type your message...">
+<button class="send" onclick="sendChat()">Send Message</button>
+</div>
+
+<p style="text-align:center;color:#777;font-size:13px">Made with ❤️ in Naija - VibeZone 2026</p>
+
 <script>
-function postVibe(v){document.getElementById('feed').innerHTML += "<p><b>You:</b> "+v+"</p>";}
-function voiceNote(){alert("🎤 Voice Vibe recording... (Demo)");document.getElementById('feed').innerHTML += "<p><b>You:</b> 🎤 Voice Note sent!</p>";}
-function sendChat(){let m=document.getElementById('chatInput').value;if(m=="") return;document.getElementById('chatBox').innerHTML += "<p><b>You:</b> "+m+"</p>";document.getElementById('chatInput').value="";}
+function postVibe(vibe){
+  let feed = document.getElementById('feed');
+  let div = document.createElement('div');
+  div.className = 'post';
+  div.innerHTML = '<b>You:</b> My vibe now na ' + vibe + '<br><small>Just now</small>';
+  feed.prepend(div);
+  alert('Your vibe don post: ' + vibe);
+}
+function voiceNote(){
+  alert('🎤 Voice Note: Hold to record - Feature don activate! Talk your vibe!');
+}
+function sendChat(){
+  let input = document.getElementById('chatInput');
+  if(input.value.trim() === ''){ alert('Type something first!'); return; }
+  let box = document.getElementById('chatBox');
+  let div = document.createElement('div');
+  div.className = 'post';
+  div.innerHTML = '<b>You:</b> ' + input.value;
+  box.appendChild(div);
+  input.value = '';
+}
 </script>
+
 </body>
 </html>
