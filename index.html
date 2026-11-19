@@ -55,3 +55,27 @@ input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #ffffff
 <div class="msg"><b>Lagos Vibers</b> - 12.4k members <button class="btn" onclick="alert('✅ You don Join Lagos Vibers!')">Join</button></div>
 <div class="msg"><b>Afrobeats Fans</b> - 8.2k members <button class="btn" onclick="alert('✅ You don Join Afrobeats Fans!')">Join</button></div></div>
 <div class="box"><h3>🛒 Market - Facebook Marketplace</h3><div class="msg"><b>🎧 Headphones</b> - ₦25,000 <button class="btn" onclick="alert('🛒 Added!')">Buy</button></div
+                                                                                                                                                                      </div>
+</div>
+<div id="insta" class="page">
+<h3>📸 Instagram - Status / Stories</h3>
+<div class="status"><div class="person"><div class="circle">+</div><p>My Story</p></div><div class="person"><div class="circle">😂</div><p>Bro Tunde</p></div><div class="person"><div class="circle">🔥</div><p>Amaka</p></div><div class="person"><div class="circle">⚽</div><p>Emeka</p></div><div class="person"><div class="circle">🎵</div><p>Zainab</p></div></div>
+<div class="card"><div style="font-size:50px;text-align:center">📸</div><h3>@ayangbaboyz</h3><p>1.2k followers • Lagos, Nigeria • Feel The Vibe 🎵</p><button class="btn">Follow</button><button class="btn2">Message</button></div>
+<div class="card"><div style="font-size:50px;text-align:center">🔥</div><h3>Amaka Post</h3><p>❤️ 2.3k • 💬 456 • New vibe in Lagos!</p><button class="btn">❤️ Like</button><button class="btn2">💬 Comment</button></div>
+</div>
+<div style="height:80px"></div>
+<div class="player"><button id="playBtn" onclick="togglePlay()">▶</button><div><b id="nowPlaying">Afrobeats Hits</b><br><small style="color:#aaa">🟢 LIVE • VibeZone Radio</small></div><div class="pb"><div id="bar"></div></div></div>
+<script>
+function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('show'));document.getElementById(id).classList.add('show');document.querySelectorAll('.apps button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo(0,0);}
+let playing=false;function play(n){document.getElementById('nowPlaying').textContent=n;playing=true;document.getElementById('playBtn').textContent='⏸';}
+function togglePlay(){playing=!playing;document.getElementById('playBtn').textContent=playing?'⏸':'▶';}
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+const firebaseConfig = { apiKey: "PASTE_YOUR_FIRST_API_KEY_HERE", authDomain: "PASTE_YOUR_FIRST_PROJECT.firebaseapp.com", projectId: "PASTE_YOUR_FIRST_PROJECT_ID", storageBucket: "PASTE_YOUR_FIRST_PROJECT.appspot.com", messagingSenderId: "PASTE_YOUR_SENDER_ID", appId: "PASTE_YOUR_APP_ID" };
+try{const app=initializeApp(firebaseConfig);const db=getFirestore(app);const auth=getAuth(app);await signInAnonymously(auth);document.getElementById('fbStatus').textContent="Firebase: ✅ Connected - Real Chat ON!";const q=query(collection(db,"messages"),orderBy("time"));onSnapshot(q,(snap)=>{let html="";snap.forEach(d=>{const m=d.data();html+=`<div class="msg"><b>${m.user||'Viber'}:</b> ${m.text}</div>`;});if(html)document.getElementById('msgs').innerHTML=html;});window.sendMsg=async()=>{const v=document.getElementById('msgInput').value;if(!v)return;await addDoc(collection(db,"messages"),{text:v,user:"You",room:document.getElementById('room').value,time:serverTimestamp()});document.getElementById('msgInput').value="";};}catch(e){document.getElementById('fbStatus').textContent="Firebase: ⚠️ Put your FIRST config keys. Demo still works.";window.sendMsg=()=>{const v=document.getElementById('msgInput').value;if(!v)return;document.getElementById('msgs').innerHTML+=`<div class="msg"><b>You:</b> ${v}</div>`;document.getElementById('msgInput').value="";};}
+</script>
+</body>
+</html>
