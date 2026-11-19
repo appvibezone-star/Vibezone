@@ -1,91 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeZone - Connect, Vibe & Share</title>
+<title>VibeZone - Naija First</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#0f0f1a;color:white;padding:15px}
-h1{text-align:center;font-size:32px}
-h1 span{color:#00ff88}
-p.sub{text-align:center;color:#bbb;margin-top:-10px}
-.card{background:#1e1e30;padding:16px;border-radius:16px;margin:15px 0;border:1px solid #333}
-h2{margin:0 0 12px 0;font-size:19px}
-button{border:none;padding:12px 14px;border-radius:20px;font-weight:bold;cursor:pointer;margin:4px 2px;font-size:14px}
-.vibe-btn{background:#2a2a45;color:white}
-.vibe-btn:active{background:#00ff88;color:black}
-.send{background:#00ff88;color:black;width:100%;margin-top:10px;padding:13px}
-input{width:100%;padding:13px;border-radius:10px;border:none;background:#2a2a45;color:white;outline:none;margin-top:8px}
-.post{background:#2a2a45;padding:12px;border-radius:12px;margin:8px 0}
-small{color:#aaa}
-.top{display:flex;gap:8px;justify-content:center;margin:10px 0}
-.top button{background:#00ff88;color:black}
+body{font-family:Arial; background:#f0f2f5; margin:0; padding:0}
+.top{background:#075E54; color:white; padding:15px; text-align:center; font-size:22px; font-weight:bold; position:sticky; top:0}
+.sub{background:#128C7E; color:white; padding:8px; text-align:center; font-size:13px}
+.status-bar{display:flex; overflow-x:auto; background:white; padding:10px; gap:10px}
+.status{text-align:center; min-width:70px; font-size:12px; cursor:pointer}
+.circle{width:60px; height:60px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:30px; border:3px solid #128C7E; color:white}
+.box{background:white; margin:10px; padding:15px; border-radius:10px}
+input, textarea, select{width:95%; padding:10px; margin:5px 0; border-radius:8px; border:1px solid #ccc}
+button{background:#25D366; color:white; border:none; padding:12px; width:100%; border-radius:8px; font-weight:bold; font-size:16px; cursor:pointer}
+.tab{display:flex; background:white; margin:10px; border-radius:10px; overflow:hidden}
+.tab div{flex:1; text-align:center; padding:12px; font-weight:bold; cursor:pointer}
+.active{background:#075E54; color:white}
+.post{background:white; margin:10px; padding:15px; border-radius:10px}
+.chatbox{background:#dcf8c6; padding:10px; border-radius:10px; margin:5px 0}
+.small{font-size:12px; color:grey}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-<h1>🔥 Vibe<span>Zone</span></h1>
-<p class="sub">Welcome to Naija First Social App 🇳🇬</p>
+<div class="top">VibeZone 🇳🇬</div>
+<div class="sub">Discover your vibe - Naija First! • Live with Firebase 🔥</div>
 
-<div class="top">
-<button onclick="alert('Welcome to VibeZone!')">🏠 Home</button>
-<button onclick="alert('Profile coming soon!')">👤 Profile</button>
-<button onclick="alert('Notifications: 3 new vibes!')">🔔 Alerts</button>
+<div class="tab">
+<div class="active">Vibes</div><div onclick="alert('Chat dey below 👇')">Chat</div><div onclick="alert('Groups dey below 👇')">Groups</div><div onclick="alert('Market go come for V4')">Market</div>
 </div>
 
-<div class="card">
-<h2>What's your vibe today?</h2>
-<button class="vibe-btn" onclick="postVibe('😎 Chill')">😎 Chill</button>
-<button class="vibe-btn" onclick="postVibe('🎉 Party')">🎉 Party</button>
-<button class="vibe-btn" onclick="postVibe('❤️ Love')">❤️ Love</button>
-<button class="vibe-btn" onclick="postVibe('🔥 Hustle')">🔥 Hustle</button>
-<button class="vibe-btn" onclick="postVibe('😂 Funny')">😂 Funny</button>
-<button class="vibe-btn" onclick="voiceNote()">🎤 Voice Note</button>
+<h3 style="padding-left:10px">👀 Status - 24 Hours</h3>
+<div class="status-bar">
+<div class="status" onclick="addStatus()"><div class="circle">+</div><br>My Status</div>
+<div class="status"><div class="circle">😂</div><br>Bro Tunde</div>
+<div class="status"><div class="circle">🔥</div><br>Amaka</div>
+<div class="status"><div class="circle">⚽</div><br>Emeka</div>
+<div class="status"><div class="circle">🎵</div><br>Zainab</div>
 </div>
 
-<div class="card">
-<h2>📱 Status Feed</h2>
-<div id="feed">
-<div class="post"><b>@LagosBoy:</b> Lagos no dey carry last! 🔥<br><small>2 mins ago</small></div>
-<div class="post"><b>@AbujaQueen:</b> Who dey Abuja today? Make we link up 💃<br><small>10 mins ago</small></div>
-<div class="post"><b>@NaijaStar:</b> New music don drop o! 🎵<br><small>25 mins ago</small></div>
-</div>
-</div>
-
-<div class="card">
-<h2>💬 Chat</h2>
-<div id="chatBox">
-<div class="post"><b>You:</b> Hello VibeZone!</div>
-</div>
-<input id="chatInput" placeholder="Type your message...">
-<button class="send" onclick="sendChat()">Send Message</button>
+<div class="box">
+<h3>Join VibeZone - Free!</h3>
+<p class="small">Use your phone number like WhatsApp, no long email.</p>
+<input type="text" id="name" placeholder="Your Name e.g. Tunde">
+<input type="text" id="phone" placeholder="Phone Number e.g. 0803...">
+<select id="state"><option>Lagos</option><option>Abuja</option><option>Port Harcourt</option><option>Kano</option><option>Ibadan</option><option>Enugu</option><option>Other</option></select>
+<button onclick="join()">JOIN VIBEZONE</button>
+<p id="welcome"></p>
 </div>
 
-<p style="text-align:center;color:#777;font-size:13px">Made with ❤️ in Naija - VibeZone 2026</p>
+<div class="box">
+<h3>Post Your Vibe</h3>
+<textarea id="vibeText" placeholder="Wetin dey happen? Talk am for Pidgin..."></textarea>
+<button onclick="postVibe()">Post Vibe 📝</button><br><br>
+<button onclick="voiceNote()" style="background:#075E54">🎤 Post Voice Vibe - Talk am, no type</button>
+<p class="small">Voice Note na WhatsApp style - for people wey no like type.</p>
+</div>
+
+<div class="box">
+<h3>👥 Naija Groups</h3>
+<p>🏫 My School Group - 240 members</p>
+<p>⛪ Church Group - 180 members</p>
+<p>⚽ Football Gist - 500 members</p>
+<p>🏠 My Estate Group - 90 members</p>
+<button style="background:#128C7E" onclick="alert('You don join group! 🎉')">Join Group</button>
+</div>
+
+<div class="box">
+<h3>💬 Chat - Like WhatsApp</h3>
+<div id="chatFeed"></div>
+<input type="text" id="chatMsg" placeholder="Type message...">
+<button onclick="sendChat()">Send Chat ➤</button>
+</div>
+
+<h3 style="padding-left:10px">🔥 Live Vibes Feed</h3>
+<div id="feed"><p style="text-align:center" class="small">Loading vibes...</p></div>
 
 <script>
-function postVibe(vibe){
-  let feed = document.getElementById('feed');
-  let div = document.createElement('div');
-  div.className = 'post';
-  div.innerHTML = '<b>You:</b> My vibe now na ' + vibe + '<br><small>Just now</small>';
-  feed.prepend(div);
-  alert('Your vibe don post: ' + vibe);
+const firebaseConfig = {
+  apiKey: "AIzaSyDVLnu7KRqWV8iPMqHCJA967p5TRYw8rGk",
+  authDomain: "vibezone-7078c.firebaseapp.com",
+  projectId: "vibezone-7078c",
+  storageBucket: "vibezone-7078c.firebasestorage.app",
+  messagingSenderId: "422861439282",
+  appId: "1:422861439282:web:6995fceb890b7fec0b972b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let myName = localStorage.getItem('vibezone_name') || "Guest";
+if(myName !== "Guest"){
+  document.getElementById('welcome').innerHTML = "Welcome back "+myName+"! 🎉 You dey logged in.";
+  document.getElementById('name').value = myName;
 }
+
+function join(){
+  let n = document.getElementById('name').value;
+  let p = document.getElementById('phone').value;
+  let s = document.getElementById('state').value;
+  if(n==""){alert("Abeg put your name"); return;}
+  myName = n;
+  localStorage.setItem('vibezone_name', n);
+  db.collection("users").add({name:n, phone:p, state:s, time: new Date()});
+  document.getElementById('welcome').innerHTML = "Welcome "+n+"! 🎉 You don join VibeZone. Naija to the world!";
+}
+
+function postVibe(){
+  let t = document.getElementById('vibeText').value;
+  if(t==""){alert("Write something first"); return;}
+  db.collection("vibes").add({name: myName, text: t, likes: 0, time: new Date()});
+  document.getElementById('vibeText').value="";
+}
+
 function voiceNote(){
-  alert('🎤 Voice Note: Hold to record - Feature don activate! Talk your vibe!');
+  db.collection("vibes").add({name: myName, text: "🎤 Voice Vibe (0:15) ▶️ Play - I talk am, I no type am!", likes: 0, time: new Date()});
+  alert("🎤 Voice Vibe posted!");
 }
+
+function addStatus(){
+  let s = prompt("Wetin be your status today?");
+  if(s){ db.collection("vibes").add({name: myName, text: "👀 STATUS: "+s, likes: 0, time: new Date()}); alert("Status posted!"); }
+}
+
 function sendChat(){
-  let input = document.getElementById('chatInput');
-  if(input.value.trim() === ''){ alert('Type something first!'); return; }
-  let box = document.getElementById('chatBox');
-  let div = document.createElement('div');
-  div.className = 'post';
-  div.innerHTML = '<b>You:</b> ' + input.value;
-  box.appendChild(div);
-  input.value = '';
+  let m = document.getElementById('chatMsg').value;
+  if(m=="") return;
+  db.collection("chats").add({name: myName, text: m, time: new Date()});
+  document.getElementById('chatMsg').value="";
 }
+
+db.collection("vibes").orderBy("time","desc").limit(50).onSnapshot((snap)=>{
+  let feed = document.getElementById('feed');
+  feed.innerHTML = "";
+  if(snap.empty){ feed.innerHTML = "<p style='text-align:center'>No vibe yet. Be the first to post! 🔥</p>"; return; }
+  snap.forEach((doc)=>{
+    let d = doc.data();
+    let div = document.createElement('div');
+    div.className='post';
+    div.innerHTML = "<b>"+(d.name||"Guest")+":</b> "+(d.text||"")+"<br><br><button style='width:auto; padding:6px 12px; background:#e8e8e8; color:black' onclick=\"likePost('"+doc.id+"',"+(d.likes||0)+")\">❤️ "+(d.likes||0)+" Like</button> &nbsp; 💬 Comment &nbsp; ↗️ Share";
+    feed.appendChild(div);
+  });
+});
+
+function likePost(id, likes){
+  db.collection("vibes").doc(id).update({likes: likes+1});
+}
+
+db.collection("chats").orderBy("time","asc").limit(30).onSnapshot((snap)=>{
+  let c = document.getElementById('chatFeed');
+  c.innerHTML = "";
+  snap.forEach((doc)=>{
+    let d = doc.data();
+    c.innerHTML += "<div class='chatbox'><b>"+(d.name||"Guest")+":</b> "+(d.text||"")+"</div>";
+  });
+});
 </script>
 
 </body>
