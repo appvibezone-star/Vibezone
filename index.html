@@ -1,57 +1,262 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VibeZone - Feel The Vibe</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#0f0f1a;color:white;min-height:100vh}
-header{padding:20px;text-align:center;background:linear-gradient(90deg,#ff0055,#ffaa00)}
-header h1{font-size:32px;letter-spacing:2px}
-header p{opacity:.9;margin-top:5px}
-.hero{text-align:center;padding:40px 20px}
-.hero h2{font-size:28px;margin-bottom:10px}
-.hero p{color:#bbb;margin-bottom:20px}
-.hero button{background:#ff0055;color:white;border:none;padding:14px 30px;border-radius:30px;font-size:16px;font-weight:bold}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:0 20px 30px}
-.card{background:#1e1e30;border-radius:15px;padding:20px;text-align:center}
-.card span{font-size:35px}
-.card h3{margin:10px 0 5px}
-.card p{color:#aaa;font-size:13px}
-.card button{margin-top:12px;background:white;color:black;border:none;padding:8px 18px;border-radius:20px;font-weight:bold}
-.player{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-top:2px solid #ff0055}
-.player button{background:#ff0055;color:white;border:none;width:45px;height:45px;border-radius:50%;font-size:18px}
-footer{text-align:center;padding:20px;color:#666;padding-bottom:90px;font-size:13px}
-</style>
-</head>
-<body>
-<header>
-<h1>🎵 VIBEZONE</h1>
-<p>Feel The Vibe • Naija To The World</p>
-</header>
-<div class="hero">
-<h2>Welcome to VibeZone 🔥</h2>
-<p>Your number 1 spot for Afrobeats, Amapiano, Hip-Hop & Good Vibes</p>
-<button onclick="playVibe()">▶ Play Vibes</button>
-</div>
-<div class="grid">
-<div class="card"><span>🔥</span><h3>Afrobeats</h3><p>Burna, Davido, Wizkid, Rema</p><button onclick="playVibe('Afrobeats')">Play</button></div>
-<div class="card"><span>🎹</span><h3>Amapiano</h3><p>South Africa Groove</p><button onclick="playVibe('Amapiano')">Play</button></div>
-<div class="card"><span>🎤</span><h3>Hip-Hop</h3><p>Rap & Trap Vibes</p><button onclick="playVibe('Hip-Hop')">Play</button></div>
-<div class="card"><span>💃</span><h3>Party Mix</h3><p>Owambe & Club Hits</p><button onclick="playVibe('Party Mix')">Play</button></div>
-</div>
-<div class="player">
-<div><b id="nowPlaying">🎵 No song playing</b><br><small>VibeZone Radio</small></div>
-<button onclick="playVibe()">▶</button>
-</div>
-<footer>VibeZone © 2026 • Made with ❤️ in Lagos</footer>
-<script>
-function playVibe(name){
-  if(name){document.getElementById('nowPlaying').innerText='🎵 Now Playing: '+name;}
-  else{document.getElementById('nowPlaying').innerText='🎵 Now Playing: VibeZone Mix';}
-  alert('Vibe don start! 🔥 '+ (name||'VibeZone Mix'));
-}
-</script>
-</body>
-</html>
+‎<!DOCTYPE html>
+‎<html lang="en">
+‎<head>
+‎<meta charset="UTF-8">
+‎<meta name="viewport" content="width=device-width, initial-scale=1.0">
+‎<title>VibeZone - Feel The Vibe</title>
+‎<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+‎<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+‎<style>
+‎*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+‎body{background:#0f0f1a;color:white;min-height:100vh}
+‎header{padding:20px;text-align:center;background:linear-gradient(90deg,#ff0055,#ffaa00)}
+‎header h1{font-size:32px;letter-spacing:2px}
+‎header p{opacity:.9;margin-top:5px}
+‎.tabs{display:flex;gap:8px;padding:12px 20px;background:#0f0f1a}
+‎.tabs button{flex:1;padding:11px;border:none;border-radius:10px;background:#1e1e30;color:white;font-weight:bold;cursor:pointer}
+‎.tabs button.active{background:#ff0055}
+‎.hero{text-align:center;padding:40px 20px 10px}
+‎.hero h2{font-size:28px;margin-bottom:10px}
+‎.hero p{color:#bbb;margin-bottom:20px}
+‎.hero button{background:#ff0055;color:white;border:none;padding:14px 30px;border-radius:30px;font-size:16px;font-weight:bold;cursor:pointer}
+‎.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;padding:20px}
+‎.card{background:#1e1e30;border-radius:15px;padding:20px;text-align:center}
+‎.card span{font-size:35px}
+‎.card h3{margin:10px 0 5px}
+‎.card p{color:#aaa;font-size:13px}
+‎.card button{margin-top:12px;background:white;color:black;border:none;padding:8px 18px;border-radius:20px;font-weight:bold;cursor:pointer}
+‎.section{display:none;padding:0 20px 30px}
+‎.section.active{display:block}
+‎.statusRow{display:flex;gap:15px;overflow-x:auto;padding:10px 0}
+‎.statusItem{text-align:center;min-width:70px;cursor:pointer}
+‎.statusItem div{width:65px;height:65px;border-radius:50%;background:#1e1e30;border:3px solid #ff0055;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 5px}
+‎.box{background:#1e1e30;border-radius:15px;padding:20px;margin-top:15px}
+‎.box h3{margin-bottom:10px}
+‎.box input,.box select,.box textarea{width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:none;background:#0f0f1a;color:white;outline:none}
+‎.box button{background:#ff0055;color:white;border:none;padding:12px;width:100%;border-radius:10px;font-weight:bold;font-size:15px;cursor:pointer}
+‎.post{background:#2a2a40;border-radius:12px;padding:14px;margin-top:12px}
+‎.post b{color:#ffaa00}
+‎.chatbox{background:#0f0f1a;border-radius:12px;padding:12px;min-height:220px;max-height:320px;overflow-y:auto;margin-top:12px}
+‎.chatMsg{background:#2a2a40;padding:10px 12px;border-radius:12px;margin-bottom:8px}
+‎.chatMsg.me{background:#1a3a2a;border:1px solid #25D366}
+‎.chatMsg b{color:#25D366}
+‎.callBar{display:flex;gap:10px;margin-top:12px}
+‎.callBar button{padding:12px !important}
+‎.voiceRow{display:flex;gap:8px;margin-top:10px}
+‎.voiceRow button{padding:12px !important}
+‎.voiceRow button.rec{background:#ff0000 !important;animation:pulse 1s infinite}
+‎@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+‎.callScreen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0f0f1a;z-index:100;text-align:center;padding:60px 20px}
+‎.callScreen h2{font-size:28px;margin:15px 0 5px}
+‎.callScreen p{color:#aaa}
+‎.callAvatar{width:110px;height:110px;border-radius:50%;background:linear-gradient(90deg,#ff0055,#ffaa00);display:flex;align-items:center;justify-content:center;font-size:55px;margin:0 auto}
+‎.callBtns{position:absolute;bottom:60px;left:0;right:0;display:flex;justify-content:center;gap:20px}
+‎.callBtns button{width:70px;height:70px;border-radius:50%;border:none;font-size:28px;color:white;cursor:pointer}
+‎.incoming{display:none;position:fixed;top:20px;left:15px;right:15px;background:#25D366;padding:20px;border-radius:15px;z-index:999;text-align:center}
+‎.incoming button{padding:12px 20px;border:none;border-radius:10px;font-weight:bold;margin:10px 5px 0;cursor:pointer}
+‎.player{position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;border-top:2px solid #ff0055;z-index:20}
+‎.player button{background:#ff0055;color:white;border:none;width:45px;height:45px;border-radius:50%;font-size:18px;cursor:pointer}
+‎footer{text-align:center;padding:20px;color:#666;padding-bottom:90px;font-size:13px}
+‎</style>
+‎</head>
+‎<body>
+‎<header>
+‎<h1>🎵 VIBEZONE</h1>
+‎<p>Feel The Vibe • Naija To The World</p>
+‎<span id="liveStatus" style="font-size:12px;background:#ffaa00;color:black;padding:4px 10px;border-radius:20px;display:inline-block;margin-top:6px">● CONNECTING...</span><br><small id="myNameShow"></small>
+‎</header>
+‎<div class="tabs">
+‎<button id="tab-Vibes" class="active" onclick="showTab('Vibes')">Vibes</button>
+‎<button id="tab-Chat" onclick="showTab('Chat')">Chat</button>
+‎<button id="tab-Calls" onclick="showTab('Calls')">Calls</button>
+‎<button id="tab-Groups" onclick="showTab('Groups')">Groups</button>
+‎<button id="tab-Market" onclick="showTab('Market')">Market</button>
+‎</div>
+‎<div id="sec-Vibes" class="section active" style="padding:0">
+‎<div style="padding:0 20px">
+‎<h3>👀 Status - 24 Hours</h3>
+‎<div class="statusRow">
+‎<div class="statusItem" onclick="alert('Add your status!')"><div>+</div><small>My Status</small></div>
+‎<div class="statusItem"><div>😂</div><small>Bro Tunde</small></div>
+‎<div class="statusItem"><div>🔥</div><small>Amaka</small></div>
+‎<div class="statusItem"><div>⚽</div><small>Emeka</small></div>
+‎<div class="statusItem"><div>🎵</div><small>Zainab</small></div>
+‎</div>
+‎</div>
+‎<div class="hero">
+‎<h2>Welcome to VibeZone 🔥</h2>
+‎<p>Your number 1 spot for Afrobeats, Amapiano, Hip-Hop & Good Vibes</p>
+‎<button onclick="playVibe()">▶ Play Vibes</button>
+‎</div>
+‎<div class="grid">
+‎<div class="card"><span>🔥</span><h3>Afrobeats</h3><p>Burna, Davido, Wizkid, Rema</p><button onclick="playVibe('Afrobeats')">Play</button></div>
+‎<div class="card"><span>🎹</span><h3>Amapiano</h3><p>South Africa Groove</p><button onclick="playVibe('Amapiano')">Play</button></div>
+‎<div class="card"><span>🎤</span><h3>Hip-Hop</h3><p>Rap & Trap Vibes</p><button onclick="playVibe('Hip-Hop')">Play</button></div>
+‎<div class="card"><span>💃</span><h3>Party Mix</h3><p>Owambe & Club Hits</p><button onclick="playVibe('Party Mix')">Play</button></div>
+‎</div>
+‎<div style="padding:0 20px 20px">
+‎<div class="box">
+‎<h3>Join VibeZone - Free!</h3>
+‎<p style="color:#aaa;font-size:13px;margin-bottom:12px">Use your phone number like WhatsApp, no long email.</p>
+‎<input id="joinName" placeholder="Your Name e.g. Wesley Ayangba" value="Wesley Ayangba">
+‎<input id="joinPhone" placeholder="Phone Number e.g. 0803...">
+‎<select id="joinCity"><option>Lagos</option><option>Abuja</option><option>Port Harcourt</option><option>Ibadan</option><option>Kano</option><option>Enugu</option></select>
+‎<button onclick="joinVibe()">JOIN VIBEZONE</button>
+‎<p id="joinMsg" style="margin-top:10px"></p>
+‎<p style="color:#ffaa00;font-size:13px">⚠️ Your phone = Wesley, Her phone = Her Name. No be same name!</p>
+‎</div>
+‎<div class="box">
+‎<h3>Post a Vibe 📝</h3>
+‎<textarea id="vibeText" placeholder="Wetin dey vibe you today?"></textarea>
+‎<button onclick="postVibe()">Post Vibe</button>
+‎<div id="vibeFeed"></div>
+‎</div>
+‎</div>
+‎</div>
+‎<div id="sec-Chat" class="section">
+‎<div class="box">
+‎<h3>Live Chat 💬 - Chat with your wife</h3>
+‎<p style="color:#aaa;font-size:13px">Type message OR send voice message like WhatsApp. LIVE now!</p>
+‎<div class="callBar">
+‎<button onclick="startCall('Voice','Wife')" style="background:#25D366">📞 Voice Call</button>
+‎<button onclick="startCall('Video','Wife')" style="background:#007bff">📹 Video Call</button>
+‎</div>
+‎<div class="chatbox" id="chatBox"></div>
+‎<input id="chatName" placeholder="Your name">
+‎<input id="chatMsg" placeholder="Type message...">
+‎<button onclick="sendChat()">Send Message ➤</button>
+‎<div class="voiceRow">
+‎<button id="recBtn" onclick="toggleRecord()">🎤 Hold to Record Voice Message</button>
+‎<button onclick="sendVoiceNote()" style="background:#ffaa00;color:black">➤ Send Voice</button>
+‎</div>
+‎<p id="recStatus" style="color:#ffaa00;font-size:13px;margin-top:8px"></p>
+‎<button onclick="testChat()" style="background:#555;margin-top:10px">🔧 Test - Press to check if LIVE dey work</button>
+‎</div>
+‎</div>
+‎<div id="sec-Calls" class="section">
+‎<div class="box"><h3>Calls 📞 - Like WhatsApp</h3>
+‎<p style="color:#aaa;font-size:13px">Call anybody for VibeZone.</p>
+‎<input id="callTo" placeholder="Who you wan call? e.g. My Wife" value="My Wife">
+‎<div class="callBar">
+‎<button onclick="startCall('Voice', document.getElementById('callTo').value)" style="background:#25D366">📞 Voice Call</button>
+‎<button onclick="startCall('Video', document.getElementById('callTo').value)" style="background:#007bff">📹 Video Call</button>
+‎</div>
+‎<div id="callHistory"></div>
+‎<div class="post"><b>❤️ My Wife</b><br><small>Last call: Today • 5 mins</small><br><button onclick="startCall('Voice','My Wife')" style="margin-top:8px;padding:8px;background:#25D366">📞 Call Now</button></div>
+‎<div class="post"><b>😂 Bro Tunde</b><br><small>Missed call • Yesterday</small><br><button onclick="startCall('Voice','Bro Tunde')" style="margin-top:8px;padding:8px;background:#25D366">📞 Call Back</button></div>
+‎</div>
+‎</div>
+‎<div id="sec-Groups" class="section">
+‎<div class="box"><h3>Groups 👥</h3>
+‎<div class="post"><b>🔥 Lagos Owambe Group</b><br><small>1,240 members</small><br><button onclick="joinGroup('Lagos Owambe Group')" style="margin-top:8px;padding:8px">Join Group</button></div>
+‎<div class="post"><b>🎵 Afrobeats Lovers</b><br><small>890 members</small><br><button onclick="joinGroup('Afrobeats Lovers')" style="margin-top:8px;padding:8px">Join Group</button></div>
+‎<div class="post"><b>💑 Couples Vibes - For you & your wife</b><br><small>Private • Only you & wife</small><br><button onclick="joinGroup('Couples Vibes')" style="margin-top:8px;padding:8px">Open Private Chat</button></div>
+‎</div>
+‎</div>
+‎<div id="sec-Market" class="section">
+‎<div class="box"><h3>Market 🛒 - Buy & Sell</h3>
+‎<input id="marketItem" placeholder="Wetin you wan sell? e.g. iPhone 12">
+‎<input id="marketPrice" placeholder="Price e.g. ₦250,000">
+‎<button onclick="postMarket()">Post for Market</button>
+‎<div id="marketFeed"></div>
+‎<div class="post"><b>👟 Nike Sneakers - ₦45,000</b><br><small>Lagos • Seller: Tunde</small></div>
+‎<div class="post"><b>📱 iPhone 11 - ₦180,000</b><br><small>Lagos • Seller: Amaka</small></div>
+‎</div>
+‎</div>
+‎<div id="incomingCall" class="incoming"><h3 id="incomingText">📞 Incoming Call...</h3><p>Press Answer now!</p><button style="background:white;color:#25D366" onclick="acceptCall()">✅ ANSWER</button><button style="background:#ff0000;color:white" onclick="declineCall()">❌ DECLINE</button></div>
+‎<div id="callScreen" class="callScreen">
+‎<div class="callAvatar">❤️</div>
+‎<h2 id="callName">My Wife</h2>
+‎<p id="callStatus">Calling... 📞</p>
+‎<p id="callTimer" style="font-size:22px;color:#25D366;margin-top:15px">00:00</p>
+‎<video id="myVideo" autoplay muted playsinline style="width:120px;border-radius:12px;display:none;margin:15px auto;border:2px solid #ff0055"></video>
+‎<div class="callBtns">
+‎<button style="background:#555" onclick="toggleMute()" id="muteBtn">🎤</button>
+‎<button style="background:#ff0000" onclick="endCall()">📞</button>
+‎<button style="background:#555" onclick="toggleVideo()">📹</button>
+‎</div>
+‎</div>
+‎<div class="player">
+‎<div><b id="nowPlaying">🎵 No song playing</b><br><small>VibeZone Radio</small></div>
+‎<button onclick="playVibe()">▶</button>
+‎</div>
+‎<footer>VibeZone © 2026 • Made with ❤️ in Lagos</footer>
+‎<script>
+‎// ===== YOUR FIREBASE CONFIG - PASTE YOUR OWN HERE =====
+‎var firebaseConfig = {
+‎  apiKey: "PASTE_YOUR_API_KEY_HERE",
+‎  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+‎  databaseURL: "https://PASTE_YOUR_PROJECT-default-rtdb.firebaseio.com",
+‎  projectId: "PASTE_YOUR_PROJECT",
+‎  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
+‎  messagingSenderId: "PASTE_SENDER_ID",
+‎  appId: "PASTE_APP_ID"
+‎};
+‎let myName = localStorage.getItem('vibeName') || 'Wesley Ayangba';
+‎let db=null, useFirebase=false;
+‎try{
+‎  if(firebaseConfig.apiKey.indexOf('PASTE')===-1){
+‎    firebase.initializeApp(firebaseConfig); db=firebase.database(); useFirebase=true;
+‎    document.getElementById('liveStatus').innerText='● LIVE 🟢 - Firebase Connected';
+‎    document.getElementById('liveStatus').style.background='#25D366'; document.getElementById('liveStatus').style.color='white';
+‎  } else {
+‎    document.getElementById('liveStatus').innerText='● OFFLINE 🟡 - Paste Firebase Config, else wife no go see chat!';
+‎  }
+‎}catch(e){ document.getElementById('liveStatus').innerText='● OFFLINE - '+e.message; }
+‎document.getElementById('myNameShow').innerText='You are: '+myName;
+‎let callInterval=null, callSecs=0, callStream=null, isMuted=false;
+‎let mediaRecorder=null, audioChunks=[], lastVoiceData=null, isRecording=false, currentCallId=null, ringAudio=null;
+‎function showTab(name){
+‎  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+‎  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+‎  document.getElementById('sec-'+name).classList.add('active');
+‎  document.getElementById('tab-'+name).classList.add('active');
+‎  window.scrollTo(0,0);
+‎}
+‎function playVibe(name){ document.getElementById('nowPlaying').innerText='🎵 Now Playing: '+(name||'VibeZone Mix'); alert('Vibe don start! 🔥 '+(name||'VibeZone Mix')); }
+‎function joinVibe(){
+‎  let n=document.getElementById('joinName').value.trim()||myName;
+‎  myName=n; localStorage.setItem('vibeName',n);
+‎  document.getElementById('joinMsg').innerText='Welcome back '+n+'! 🎉 You dey logged in.';
+‎  document.getElementById('chatName').value=n; document.getElementById('myNameShow').innerText='You are: '+n;
+‎  alert('Welcome to VibeZone '+n+'! 🎉');
+‎}
+‎function testChat(){ if(!useFirebase) return alert('OFFLINE! Paste Firebase config first.'); db.ref('chats').push({name:'SYSTEM',msg:'Test: If you see this for both phones, LIVE dey work! ✅',type:'text',time:Date.now()}); alert('Test sent! Check both phones.'); }
+‎function renderVibes(arr){ let f=document.getElementById('vibeFeed'); f.innerHTML=arr.length?'':'<p style="color:#888">No vibes yet. Be first!</p>'; arr.slice().reverse().forEach(d=>{ f.innerHTML+='<div class="post"><b>'+d.name+'</b><br>'+d.text+'<br><small>❤️ '+d.likes+' likes</small></div>'; }); }
+‎function postVibe(){ let t=document.getElementById('vibeText').value.trim(); if(!t) return alert('Type something!'); if(!useFirebase) return alert('OFFLINE! Paste Firebase config.'); db.ref('vibes').push({name:myName,text:t,likes:0,time:Date.now()}); document.getElementById('vibeText').value=''; }
+‎if(useFirebase) db.ref('vibes').limitToLast(20).on('value',s=>{ let a=[]; s.forEach(c=>a.push(c.val())); renderVibes(a); });
+‎function renderChat(arr){ let box=document.getElementById('chatBox'); box.innerHTML=arr.length?'':'<p style="color:#888">No chat yet. Say hello to your wife! 👋</p>'; arr.forEach(d=>{ if(d.type==='voice') box.innerHTML+='<div class="chatMsg '+(d.name===myName?'me':'')+'"><b>'+d.name+':</b> 🎤 Voice<br><audio controls src="'+d.url+'" style="width:100%"></audio></div>'; else box.innerHTML+='<div class="chatMsg '+(d.name===myName?'me':'')+'"><b>'+d.name+':</b> '+d.msg+'</div>'; }); box.scrollTop=box.scrollHeight; }
+‎function sendChat(){ let n=document.getElementById('chatName').value||myName; let m=document.getElementById('chatMsg').value.trim(); if(!m) return; if(!useFirebase) return alert('OFFLINE! Paste Firebase config, else wife no go see am.'); db.ref('chats').push({name:n,msg:m,type:'text',time:Date.now()}); document.getElementById('chatMsg').value=''; }
+‎if(useFirebase) db.ref('chats').limitToLast(50).on('value',s=>{ let a=[]; s.forEach(c=>a.push(c.val())); renderChat(a); });
+‎async function toggleRecord(){
+‎  let btn=document.getElementById('recBtn');
+‎  if(!isRecording){
+‎    try{ callStream=await navigator.mediaDevices.getUserMedia({audio:true}); mediaRecorder=new MediaRecorder(callStream); audioChunks=[]; mediaRecorder.ondataavailable=e=>audioChunks.push(e.data); mediaRecorder.onstop=()=>{ let blob=new Blob(audioChunks,{type:'audio/webm'}); let r=new FileReader(); r.onloadend=()=>{ lastVoiceData=r.result; document.getElementById('recStatus').innerText='✅ Voice don record! Press Send Voice.'; }; r.readAsDataURL(blob); callStream.getTracks().forEach(t=>t.stop()); }; mediaRecorder.start(); isRecording=true; btn.classList.add('rec'); btn.innerText='🔴 Recording... Press to STOP'; document.getElementById('recStatus').innerText='🎤 Recording... Talk now!'; }catch(e){ alert('Allow microphone! 🎤'); }
+‎  } else { mediaRecorder.stop(); isRecording=false; btn.classList.remove('rec'); btn.innerText='🎤 Hold to Record Voice Message'; }
+‎}
+‎function sendVoiceNote(){ if(!lastVoiceData) return alert('Record voice first!'); if(!useFirebase) return alert('OFFLINE!'); if(lastVoiceData.length>800000) return alert('Voice too long, make am under 8 secs'); db.ref('chats').push({name:myName,url:lastVoiceData,type:'voice',time:Date.now()}); lastVoiceData=null; document.getElementById('recStatus').innerText='Voice sent! 🎤✅'; }
+‎async function startCall(type,to){
+‎  if(!useFirebase) return alert('OFFLINE! Paste Firebase config, else call no go ring wife phone.');
+‎  currentCallId='call_'+Date.now();
+‎  db.ref('calls/'+currentCallId).set({from:myName,to:to||'EVERYBODY',type:type,status:'ringing',time:Date.now()});
+‎  document.getElementById('callName').innerText=to||'My Wife'; document.getElementById('callStatus').innerText=type+' Calling... Waiting for her to answer...'; document.getElementById('callScreen').style.display='block'; callSecs=0; if(callInterval) clearInterval(callInterval); callInterval=setInterval(()=>{ callSecs++; let m=String(Math.floor(callSecs/60)).padStart(2,'0'); let s=String(callSecs%60).padStart(2,'0'); document.getElementById('callTimer').innerText=m+':'+s; },1000);
+‎  try{ if(type==='Video'){ callStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true}); let v=document.getElementById('myVideo'); v.style.display='block'; v.srcObject=callStream; } else { callStream=await navigator.mediaDevices.getUserMedia({audio:true}); } }catch(e){}
+‎  db.ref('calls/'+currentCallId).on('value',snap=>{ let v=snap.val(); if(!v) return; if(v.status==='declined'){ alert('She decline call'); endCall(); } if(v.status==='accepted'){ document.getElementById('callStatus').innerText='Connected ✅ with '+v.answeredBy; } if(v.status==='ended'){ endCall(); } });
+‎}
+‎function endCall(){ document.getElementById('callScreen').style.display='none'; document.getElementById('incomingCall').style.display='none'; if(callInterval) clearInterval(callInterval); if(callStream) callStream.getTracks().forEach(t=>t.stop()); if(ringAudio) ringAudio.pause(); document.getElementById('myVideo').style.display='none'; if(currentCallId && useFirebase) db.ref('calls/'+currentCallId).update({status:'ended'}); }
+‎function acceptCall(){ document.getElementById('incomingCall').style.display='none'; if(ringAudio) ringAudio.pause(); if(currentCallId && useFirebase) db.ref('calls/'+currentCallId).update({status:'accepted',answeredBy:myName}); document.getElementById('callScreen').style.display='block'; document.getElementById('callStatus').innerText='Connected ✅'; }
+‎function declineCall(){ document.getElementById('incomingCall').style.display='none'; if(ringAudio) ringAudio.pause(); if(currentCallId && useFirebase) db.ref('calls/'+currentCallId).update({status:'declined'}); }
+‎function toggleMute(){ isMuted=!isMuted; document.getElementById('muteBtn').innerText=isMuted?'🔇':'🎤'; if(callStream) callStream.getAudioTracks().forEach(t=>t.enabled=!isMuted); }
+‎function toggleVideo(){ let v=document.getElementById('myVideo'); v.style.display=v.style.display==='none'?'block':'none'; }
+‎if(useFirebase){
+‎  db.ref('calls').on('child_added',snap=>{ let v=snap.val(); if(!v) return; if(v.from!==myName && v.status==='ringing'){ currentCallId=snap.key; document.getElementById('incomingText').innerText='📞 '+v.from+' dey call you! '+v.type+' Call'; document.getElementById('incomingCall').style.display='block'; document.getElementById('callName').innerText=v.from; try{ ringAudio=new Audio('https://actions.google.com/sounds/v1/alarms/phone_call.ogg'); ringAudio.loop=true; ringAudio.play(); }catch(e){} if(navigator.vibrate) navigator.vibrate([500,200,500]); } });
+‎  db.ref('calls').limitToLast(10).on('value',s=>{ let el=document.getElementById('callHistory'); el.innerHTML='<h4 style="margin-top:15px">Recent Calls (Live)</h4>'; let a=[]; s.forEach(c=>a.push(c.val())); a.reverse().forEach(c=>{ el.innerHTML+='<div class="post"><b>'+c.type+' Call from '+c.from+'</b><br><small>'+c.status+' • '+new Date(c.time).toLocaleString()+'</small></div>'; }); });
+‎}
+‎function joinGroup(g){ alert('You don join '+g+'! 🎉'); if(g.includes('Couples')){ showTab('Chat'); alert('Private space for you & your wife ❤️'); } }
+‎function postMarket(){ let it=document.getElementById('marketItem').value.trim(); let pr=document.getElementById('marketPrice').value.trim(); if(!it) return alert('Type wetin you wan sell!'); if(!useFirebase) return alert('OFFLINE!'); db.ref('market').push({item:it,price:pr||'DM for price',name:myName,time:Date.now()}); document.getElementById('marketItem').value=''; document.getElementById('marketPrice').value=''; }
+‎if(useFirebase) db.ref('market').limitToLast(20).on('value',s=>{ let f=document.getElementById('marketFeed'); f.innerHTML=''; let a=[]; s.forEach(c=>a.push(c.val())); a.reverse().forEach(d=>{ f.innerHTML+='<div class="post"><b>'+d.item+' - '+d.price+'</b><br><small>Seller: '+d.name+'</small></div>'; }); });
+‎document.getElementById('chatName').value=myName;
+‎document.getElementById('joinMsg').innerText='Welcome back '+myName+'! 🎉 You dey logged in.';
+‎</script>
+‎</body>
+‎</html
