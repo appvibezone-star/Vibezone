@@ -88,7 +88,6 @@ input,select{width:100%;padding:12px;border-radius:10px;border:none;margin:8px 0
 <button class="btn2" onclick="alert('📸 Story Camera Open!')">➕ Add Your Story</button></div>
 </div>
 
-<div class="player"><b>🎵 Now Playing: Afrobeats Vibes</b><br><button onclick="alert('▶️ Playing!')">▶️ Play</button><button onclick="alert('⏸️ Paused!')">⏸️ Pause</button><button onclick="alert('⏭️ Next Vibe!')">⏭️ Next</button></div>
 
 <script>
 function show(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
@@ -96,5 +95,13 @@ function like(b){b.innerText='❤️ Liked!';b.style.background='#ff00cc';b.styl
 function sendChat(){let i=document.getElementById('chatInput');if(!i.value)return;document.getElementById('msgs').innerHTML+='<div class="msg"><b>You:</b> '+i.value+'</div>';i.value=''}
 function postFeed(){let i=document.getElementById('feedInput');if(!i.value)return;document.getElementById('feedList').innerHTML='<div class="msg"><b>You:</b> '+i.value+' <br><button class="btn" onclick="like(this)">❤️ Like</button></div>'+document.getElementById('feedList').innerHTML;i.value='';alert('Posted! ✅')}
 </script>
+  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://qwlqitglihyvrkvedajv.supabase.co";
+  const SUPABASE_ANON_KEY = "PASTE YOUR ANON KEY HERE";
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
 </body>
-</html>
+</html
+
