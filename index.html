@@ -51,6 +51,15 @@ small{color:#aaa}
 <div id="chatBox"><p style="color:#888">Loading live chat...</p></div>
 <input id="chatInput" placeholder="Type message...">
 <button onclick="sendMessage()">Send</button>
+  button onclick="toggleVoice()">🎤</button>
+<button onclick="startCall(false)">📞</button>
+<button onclick="startCall(true)">📹</button>
+<p id="voiceStatus"></p>
+<div id="callBox" style="display:none">
+<video id="localVideo" autoplay muted style="width:100px"></video>
+<video id="remoteVideo" autoplay style="width:100px"></video>
+<button onclick="endCall()">End Call</button>
+</div>
 <p><small>Every message here dey enter your Supabase, you go see am.</small></p>
 </div>
 
