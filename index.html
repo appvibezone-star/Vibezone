@@ -137,6 +137,29 @@ function subscribeChat(){
   supabaseClient.channel('chat-room').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},()=>loadChat()).subscribe();
 }
 checkUser();
+  let voiceOn=false,rec;
+function toggleVoice(){
+if(!voiceOn){
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR){alert("Voice no work for this browser");return;}
+rec=new SR();rec.continuous=true;rec.interimResults=false;
+rec.onresult=e=>{let t=e.results[e.results.length-1][0].transcript;document.getElementById('chatInput').value+=t+" ";};
+rec.start();voiceOn=true;document.getElementById('voiceStatus').innerText="🎤 Listening... tap again to stop";
+}else{rec.stop();voiceOn=false;document.getElementById('voiceStatus').innerText="";}}
+let localStream;
+async function startCall(video){
+try{
+localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:video});
+document.getElementById('callBox').style.display='block';
+document.getElementById('localVideo').srcObject=localStream;
+document.getElementById('voiceStatus').innerText=video?"📹 Video call started (local preview)":"📞 Voice call started";
+}catch(e){alert("Allow mic/camera: "+e.message);}}
+function endCall(){
+if(localStream)localStream.getTracks().forEach(t=>t.stop());
+document.getElementById('callBox').style.display='none';
+document.getElementById('voiceStatus').innerText="Call ended";}
+  
 </script>
+  
 </body>
 </html>
