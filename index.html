@@ -1,165 +1,54 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vibezone</title>
+<title>VibeZone - Live Chat</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-body{font-family:sans-serif;background:#150826;color:#fff;margin:0;padding:12px}
-h1{color:#c86bff;text-align:center;margin:5px}
-.sub{text-align:center;color:#aaa;font-size:13px}
-.card{background:#241138;padding:14px;border-radius:14px;margin:12px 0;border:1px solid #3d1a66}
-input,textarea{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:0;background:#1a0b2e;color:#fff;box-sizing:border-box}
-button{background:#ff2d55;color:#fff;border:0;padding:11px 16px;border-radius:10px;font-weight:bold;cursor:pointer}
-button.secondary{background:#444}
-#chatBox{height:260px;overflow-y:auto;background:#0f0620;padding:10px;border-radius:10px}
-.msg{margin:7px 0}
-.msg b{color:#ff7ab8}
-small{color:#aaa}
-.hidden{display:none}
-.top{display:flex;justify-content:space-between;align-items:center}
-.live{background:red;padding:3px 8px;border-radius:20px;font-size:12px}
+body{font-family:Arial;background:#111;color:#fff;margin:0;padding:10px}
+#chat{height:60vh;overflow-y:auto;background:#222;padding:10px;border-radius:10px}
+.msg{background:#333;padding:8px;margin:5px 0;border-radius:8px}
+input{width:70%;padding:10px;border-radius:8px;border:none}
+button{padding:10px 15px;background:#ff2d55;color:#fff;border:none;border-radius:8px}
 </style>
 </head>
 <body>
-<h1>💜 VIBEZONE</h1>
-<p class="sub">Your World. Your Vibe. <span class="live">● LIVE</span></p>
-
-<div id="auth" class="card">
-<h3>Login / Signup</h3>
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<input id="username" placeholder="Choose username e.g Ayangba">
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()" class="secondary">Login</button>
-<p id="authMsg"></p>
-</div>
-
-<div id="app" class="hidden">
-<div class="card top"><span id="userEmail"></span><button onclick="logout()" class="secondary">Logout</button></div>
-
-<div class="card">
-<h3>Post Vibe</h3>
-<textarea id="caption" placeholder="Wetin dey sup?"></textarea>
-<input id="imageUrl" placeholder="Image link (optional)">
-<button onclick="createPost()">Post</button>
-</div>
-
-<div class="card">
-<h3>💬 Live Chat - Vibezone Room</h3>
-<div id="chatBox"><p style="color:#888">Loading live chat...</p></div>
-<input id="chatInput" placeholder="Type message...">
-<button onclick="sendMessage()">Send</button>
-  button onclick="toggleVoice()">🎤</button>
-<button onclick="startCall(false)">📞</button>
-<button onclick="startCall(true)">📹</button>
-<p id="voiceStatus"></p>
-<div id="callBox" style="display:none">
-<video id="localVideo" autoplay muted style="width:100px"></video>
-<video id="remoteVideo" autoplay style="width:100px"></video>
-<button onclick="endCall()">End Call</button>
-</div>
-<p><small>Every message here dey enter your Supabase, you go see am.</small></p>
-</div>
-
-<div id="feed"></div>
-</div>
+<h2>🔥 VibeZone - Online Chat</h2>
+<input id="username" placeholder="Your name e.g Ayangba" /><br><br>
+<div id="chat"></div><br>
+<input id="msgInput" placeholder="Type message..." />
+<button onclick="sendMsg()">Send</button>
 
 <script>
 const SUPABASE_URL = "https://qwlqitglihyvrkvedajv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_UwgtUP4-gciUdkiEP0Qccw_zfXIOwZ4";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let myUsername = "user";
-async function signup(){
-  const {error} = await supabaseClient.auth.signUp({email:email.value,password:password.value});
-  if(error){ document.getElementById('authMsg').innerText = error.message; return; }
-  if(username.value){ localStorage.setItem('vz_name', username.value); }
-  document.getElementById('authMsg').innerText = "Check email to confirm, then Login";
+
+async function loadMessages(){
+  const { data } = await supabaseClient.from('messages').select('*').order('created_at',{ascending:true});
+  const chat = document.getElementById('chat');
+  chat.innerHTML = "";
+  if(data) data.forEach(m=>{
+    chat.innerHTML += `<div class="msg"><b>${m.username}:</b> ${m.message}</div>`;
+  });
+  chat.scrollTop = chat.scrollHeight;
 }
-async function login(){
-  const {error} = await supabaseClient.auth.signInWithPassword({email:email.value,password:password.value});
-  if(error){ document.getElementById('authMsg').innerText = error.message; return; }
-  if(username.value) localStorage.setItem('vz_name', username.value);
-  checkUser();
+
+async function sendMsg(){
+  const username = document.getElementById('username').value || "Guest";
+  const message = document.getElementById('msgInput').value;
+  if(!message) return;
+  await supabaseClient.from('messages').insert([{username, message}]);
+  document.getElementById('msgInput').value = "";
 }
-async function logout(){ await supabaseClient.auth.signOut(); location.reload(); }
-async function checkUser(){
-  const {data:{user}} = await supabaseClient.auth.getUser();
-  if(user){
-    document.getElementById('auth').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    myUsername = localStorage.getItem('vz_name') || user.email.split('@')[0];
-    document.getElementById('userEmail').innerText = "Logged in as: @" + myUsername;
-    loadFeed(); loadChat(); subscribeChat();
-  }
-}
-async function createPost(){
-  const {data:{user}} = await supabaseClient.auth.getUser();
-  const {error} = await supabaseClient.from('posts').insert({user_id:user.id,caption:caption.value,image_url:imageUrl.value || null});
-  if(error) alert(error.message); else {caption.value=""; imageUrl.value=""; loadFeed();}
-}
-async function loadFeed(){
-  const {data,error} = await supabaseClient.from('posts').select('*, profiles(username), likes(count), comments(*, profiles(username))').order('created_at',{ascending:false});
-  if(error){ document.getElementById('feed').innerHTML = "Feed: "+error.message; return; }
-  document.getElementById('feed').innerHTML = data.map(p=>`
-    <div class="card"><b>@${p.profiles?.username || 'user'}</b> <small>${new Date(p.created_at).toLocaleString()}</small>
-    <p>${p.caption||''}</p>${p.image_url?`<img src="${p.image_url}" style="width:100%;border-radius:10px">`:''}
-    <br><button onclick="likePost('${p.id}')">❤️ Like (${p.likes?.length||0})</button>
-    <button class="secondary" onclick="commentPost('${p.id}')">💬 Comment</button>
-    <div>${(p.comments||[]).map(c=>`<p><b>@${c.profiles?.username||'user'}:</b> ${c.content}</p>`).join('')}</div></div>`).join('') || "<p>No posts yet. Be first!</p>";
-}
-async function likePost(postId){
-  const {data:{user}} = await supabaseClient.auth.getUser();
-  await supabaseClient.from('likes').insert({user_id:user.id,post_id:postId}); loadFeed();
-}
-async function commentPost(postId){
-  const text = prompt("Write comment:");
-  if(!text) return;
-  const {data:{user}} = await supabaseClient.auth.getUser();
-  await supabaseClient.from('comments').insert({user_id:user.id,post_id:postId,content:text}); loadFeed();
-}
-async function loadChat(){
-  const {data,error} = await supabaseClient.from('messages').select('*').order('created_at',{ascending:true}).limit(100);
-  if(error){ document.getElementById('chatBox').innerHTML = error.message; return; }
-  const box = document.getElementById('chatBox');
-  box.innerHTML = data.map(m=>`<div class="msg"><b>@${m.username||'user'}:</b> ${m.content} <br><small>${new Date(m.created_at).toLocaleString()}</small></div>`).join('') || "<p>No chat yet. Start am!</p>";
-  box.scrollTop = box.scrollHeight;
-}
-async function sendMessage(){
-  const input = document.getElementById('chatInput');
-  if(!input.value.trim()) return;
-  const {data:{user}} = await supabaseClient.auth.getUser();
-  const {error} = await supabaseClient.from('messages').insert({user_id:user.id, username:myUsername, content:input.value});
-  if(error) alert(error.message); else { input.value=""; loadChat(); }
-}
-function subscribeChat(){
-  supabaseClient.channel('chat-room').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},()=>loadChat()).subscribe();
-}
-checkUser();
-  let voiceOn=false,rec;
-function toggleVoice(){
-if(!voiceOn){
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR){alert("Voice no work for this browser");return;}
-rec=new SR();rec.continuous=true;rec.interimResults=false;
-rec.onresult=e=>{let t=e.results[e.results.length-1][0].transcript;document.getElementById('chatInput').value+=t+" ";};
-rec.start();voiceOn=true;document.getElementById('voiceStatus').innerText="🎤 Listening... tap again to stop";
-}else{rec.stop();voiceOn=false;document.getElementById('voiceStatus').innerText="";}}
-let localStream;
-async function startCall(video){
-try{
-localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:video});
-document.getElementById('callBox').style.display='block';
-document.getElementById('localVideo').srcObject=localStream;
-document.getElementById('voiceStatus').innerText=video?"📹 Video call started (local preview)":"📞 Voice call started";
-}catch(e){alert("Allow mic/camera: "+e.message);}}
-function endCall(){
-if(localStream)localStream.getTracks().forEach(t=>t.stop());
-document.getElementById('callBox').style.display='none';
-document.getElementById('voiceStatus').innerText="Call ended";}
-  
+
+loadMessages();
+
+// Real-time - when friend sends, you see am instantly
+supabaseClient.channel('chat-room')
+  .on('postgres_changes', {event:'INSERT', schema:'public', table:'messages'}, ()=> loadMessages())
+  .subscribe();
 </script>
-  
 </body>
 </html>
