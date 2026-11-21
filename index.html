@@ -1,54 +1,37 @@
 !DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VibeZone - Live Chat</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>VibeZone - Online Chat</title>
 <style>
-body{font-family:Arial;backgroundlinear-gradient(135deg,#ff2d95,#a100ff,#ff6ec4,#7b2fff)color:#fff;margin:0;padding:10px}
-#chat{height:60vh;overflow-y:auto;background:#222;padding:10px;border-radius:10px}
-.msg{background:#333;padding:8px;margin:5px 0;border-radius:8px}
-input{width:70%;padding:10px;border-radius:8px;border:none}
-button{padding:10px 15px;background:#ff2d55;color:#fff;border:none;border-radius:8px}
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#ff5e8a,#a855f7,#ff8a5c);min-height:100vh;padding:15px;box-sizing:border-box}
+h1{color:white;text-align:center}
+.box{background:white;border-radius:20px;padding:15px;max-width:500px;margin:auto}
+input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;box-sizing:border-box}
+#chat{background:#111;color:white;height:300px;border-radius:15px;padding:12px;overflow:auto;margin-bottom:10px}
+.row{display:flex;gap:10px}
+.row input{margin:0}
+button{background:#ff2d55;color:white;border:0;padding:12px 20px;border-radius:10px;font-weight:bold}
 </style>
 </head>
 <body>
-<h2>🔥 VibeZone - Online Chat</h2>
-<input id="username" placeholder="Your name e.g Ayangba" /><br><br>
-<div id="chat"></div><br>
-<input id="msgInput" placeholder="Type message..." />
-<button onclick="sendMsg()">Send</button>
-
+<h1>🔥 VibeZone - Online Chat</h1>
+<div class="box">
+<input placeholder="Your name e.g Ayangba">
+<div id="chat"></div>
+<div class="row">
+<input id="msg" placeholder="Type message...">
+<button onclick="send()">Send</button>
+</div>
+</div>
 <script>
-const SUPABASE_URL = "https://qwlqitglihyvrkvedajv.supabase.co";
-const SUPABASE_KEY = "sb_publishable_UwgtUP4-gciUdkiEP0Qccw_zfXIOwZ4";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-async function loadMessages(){
-  const { data } = await supabaseClient.from('messages').select('*').order('created_at',{ascending:true});
-  const chat = document.getElementById('chat');
-  chat.innerHTML = "";
-  if(data) data.forEach(m=>{
-    chat.innerHTML += `<div class="msg"><b>${m.username}:</b> ${m.message}</div>`;
-  });
-  chat.scrollTop = chat.scrollHeight;
+function send(){
+var m=document.getElementById('msg').value;
+if(!m) return;
+var c=document.getElementById('chat');
+c.innerHTML+='<div>'+m+'</div>';
+document.getElementById('msg').value='';
 }
-
-async function sendMsg(){
-  const username = document.getElementById('username').value || "Guest";
-  const message = document.getElementById('msgInput').value;
-  if(!message) return;
-  await supabaseClient.from('messages').insert([{username, message}]);
-  document.getElementById('msgInput').value = "";
-}
-
-loadMessages();
-
-// Real-time - when friend sends, you see am instantly
-supabaseClient.channel('chat-room')
-  .on('postgres_changes', {event:'INSERT', schema:'public', table:'messages'}, ()=> loadMessages())
-  .subscribe();
 </script>
 </body>
 </html>
