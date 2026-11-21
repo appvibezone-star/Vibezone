@@ -1,37 +1,54 @@
-!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VibeZone - Online Chat</title>
-<style>
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#ff5e8a,#a855f7,#ff8a5c);min-height:100vh;padding:15px;box-sizing:border-box}
-h1{color:white;text-align:center}
-.box{background:white;border-radius:20px;padding:15px;max-width:500px;margin:auto}
-input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin-bottom:10px;box-sizing:border-box}
-#chat{background:#111;color:white;height:300px;border-radius:15px;padding:12px;overflow:auto;margin-bottom:10px}
-.row{display:flex;gap:10px}
-.row input{margin:0}
-button{background:#ff2d55;color:white;border:0;padding:12px 20px;border-radius:10px;font-weight:bold}
-</style>
-</head>
-<body>
-<h1>🔥 VibeZone - Online Chat</h1>
-<div class="box">
-<input placeholder="Your name e.g Ayangba">
-<div id="chat"></div>
-<div class="row">
-<input id="msg" placeholder="Type message...">
-<button onclick="send()">Send</button>
-</div>
-</div>
-<script>
-function send(){
-var m=document.getElementById('msg').value;
-if(!m) return;
-var c=document.getElementById('chat');
-c.innerHTML+='<div>'+m+'</div>';
-document.getElementById('msg').value='';
-}
-</script>
-</body>
-</html>
+‎<!DOCTYPE html>
+‎<html>
+‎<head>
+‎<meta charset="utf-8">
+‎<meta name="viewport" content="width=device-width, initial-scale=1">
+‎<title>VibeZone-3</title>
+‎<style>
+‎body{margin:0;background:#0f0f1a;color:#fff;font-family:sans-serif}
+‎header{padding:20px;text-align:center;background:#1a1a2e}
+‎.logo{font-size:32px;font-weight:900;color:#a855f7}
+‎.logo span{color:#ec4899}
+‎.card{background:#1e1e35;margin:15px;padding:15px;border-radius:15px}
+‎input,textarea{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:0;background:#2a2a45;color:#fff}
+‎button{background:#a855f7;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:700;width:100%}
+‎.post{background:#2a2a45;padding:12px;border-radius:12px;margin-top:10px}
+‎</style>
+‎</head>
+‎<body>
+‎<header>
+‎<div class="logo">VIBE<span>ZONE-3</span></div>
+‎<p>Post. Vibe. Connect. 🔥</p>
+‎</header>
+‎
+‎<div class="card">
+‎<h3>Create Post</h3>
+‎<input id="name" placeholder="Your name">
+‎<textarea id="text" placeholder="What's vibing?"></textarea>
+‎<button onclick="post()">Post Vibe 🚀</button>
+‎</div>
+‎
+‎<div class="card">
+‎<h3>Feed</h3>
+‎<div id="feed">Loading...</div>
+‎</div>
+‎
+‎<script>
+‎async function load(){
+‎  let r = await fetch('/api/posts');
+‎  let data = await r.json();
+‎  document.getElementById('feed').innerHTML = data.map(p=>`<div class="post"><b>${p.username}</b><p>${p.content}</p></div>`).join('') || 'No vibes yet. Be first!';
+‎}
+‎async function post(){
+‎  let username=document.getElementById('name').value||'Anonymous';
+‎  let content=document.getElementById('text').value;
+‎  if(!content) return alert('Write something!');
+‎  await fetch('/api/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,content})});
+‎  document.getElementById('text').value='';
+‎  load();
+‎}
+‎load();
+‎</script>
+‎</body>
+‎</html>
+‎
