@@ -11,6 +11,12 @@ app.use(express.static(path.join(__dirname)));
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
+// PREMIUM CHECK
+app.get('/api/premium/:username', async (req, res) => {
+  const { data } = await supabase.from('users').select('is_premium').eq('username', req.params.username).single();
+  res.json({ is_premium: data?.is_premium || false });
+});
+
 app.get('/api/posts', async (req, res) => {
   const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false }).limit(50);
   if (error) return res.status(500).json({ error: error.message });
@@ -18,8 +24,8 @@ app.get('/api/posts', async (req, res) => {
 });
 
 app.post('/api/posts', async (req, res) => {
-  const { username, content, image_url } = req.body;
-  const { data, error } = await supabase.from('posts').insert([{ username, content, image_url, likes: 0 }]).select().single();
+  const { username, content, image_url, is_premium } = req.body;
+  const { data, error } = await supabase.from('posts').insert([{ username, content, image_url, likes: 0, is_premium: is_premium || false }]).select().single();
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });
@@ -50,4 +56,4 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('VibeZone-3 running on ' + PORT));
+app.listen(PORT, () => console.log('VibeZone-3 PREMIUM running on ' + PORT));
