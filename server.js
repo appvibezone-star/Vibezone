@@ -11,7 +11,6 @@ app.use(express.static(path.join(__dirname)));
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
-// PREMIUM CHECK
 app.get('/api/premium/:username', async (req, res) => {
   const { data } = await supabase.from('users').select('is_premium').eq('username', req.params.username).single();
   res.json({ is_premium: data?.is_premium || false });
