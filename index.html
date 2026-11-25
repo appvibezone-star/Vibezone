@@ -1,54 +1,60 @@
-‎<!DOCTYPE html>
-‎<html>
-‎<head>
-‎<meta charset="utf-8">
-‎<meta name="viewport" content="width=device-width, initial-scale=1">
-‎<title>VibeZone-3</title>
-‎<style>
-‎body{margin:0;background:#0f0f1a;color:#fff;font-family:sans-serif}
-‎header{padding:20px;text-align:center;background:#1a1a2e}
-‎.logo{font-size:32px;font-weight:900;color:#a855f7}
-‎.logo span{color:#ec4899}
-‎.card{background:#1e1e35;margin:15px;padding:15px;border-radius:15px}
-‎input,textarea{width:100%;padding:12px;margin:8px 0;border-radius:10px;border:0;background:#2a2a45;color:#fff}
-‎button{background:#a855f7;color:#fff;border:0;padding:12px 20px;border-radius:10px;font-weight:700;width:100%}
-‎.post{background:#2a2a45;padding:12px;border-radius:12px;margin-top:10px}
-‎</style>
-‎</head>
-‎<body>
-‎<header>
-‎<div class="logo">VIBE<span>ZONE-3</span></div>
-‎<p>Post. Vibe. Connect. 🔥</p>
-‎</header>
-‎
-‎<div class="card">
-‎<h3>Create Post</h3>
-‎<input id="name" placeholder="Your name">
-‎<textarea id="text" placeholder="What's vibing?"></textarea>
-‎<button onclick="post()">Post Vibe 🚀</button>
-‎</div>
-‎
-‎<div class="card">
-‎<h3>Feed</h3>
-‎<div id="feed">Loading...</div>
-‎</div>
-‎
-‎<script>
-‎async function load(){
-‎  let r = await fetch('/api/posts');
-‎  let data = await r.json();
-‎  document.getElementById('feed').innerHTML = data.map(p=>`<div class="post"><b>${p.username}</b><p>${p.content}</p></div>`).join('') || 'No vibes yet. Be first!';
-‎}
-‎async function post(){
-‎  let username=document.getElementById('name').value||'Anonymous';
-‎  let content=document.getElementById('text').value;
-‎  if(!content) return alert('Write something!');
-‎  await fetch('/api/posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,content})});
-‎  document.getElementById('text').value='';
-‎  load();
-‎}
-‎load();
-‎</script>
-‎</body>
-‎</html>
-‎
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VibeZone-3</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{margin:0;background:#0f0f1a;color:white;font-family:sans-serif}
+header{padding:20px;text-align:center}
+.logo{font-size:32px;font-weight:900}
+.logo span{color:#ec4899}
+.card{background:#1e1e35;margin:15px;padding:15px;border-radius:12px}
+input,textarea{width:100%;padding:12px;margin:8px 0;border-radius:8px;border:none;box-sizing:border-box}
+button{background:#a855f7;color:#fff;border:none;padding:12px 20px;border-radius:8px;font-weight:bold;width:100%}
+.post{background:#2a2a45;padding:12px;border-radius:10px;margin-top:10px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">VIBE<span>ZONE-3</span></div>
+<p>Post. Vibe. Connect. 🔥</p>
+</header>
+
+<div class="card">
+<h3>Create Post</h3>
+<input id="name" placeholder="Your name">
+<textarea id="text" placeholder="What's vibing?"></textarea>
+<button onclick="post()">Post Vibe 🚀</button>
+</div>
+
+<div class="card">
+<h3>Feed</h3>
+<div id="feed">Loading...</div>
+</div>
+
+<script>
+const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL_HERE";
+const SUPABASE_KEY = "PASTE_YOUR_ANON_KEY_HERE";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function load(){
+  let {data, error} = await supabaseClient.from('posts').select('*').order('created_at',{ascending:false});
+  if(error){ document.getElementById('feed').innerHTML = 'Error: '+error.message; return; }
+  if(!data || data.length===0){ document.getElementById('feed').innerHTML = 'No vibes yet. Be first!'; return; }
+  document.getElementById('feed').innerHTML = data.map(p=>`<div class="post"><b>${p.username || 'Anon'}</b><br>${p.content}</div>`).join('');
+}
+async function post(){
+  let username = document.getElementById('name').value || 'Anon';
+  let content = document.getElementById('text').value;
+  if(!content) return alert('Write something');
+  let {error} = await supabaseClient.from('posts').insert([{username, content}]);
+  if(error) return alert('Error: '+error.message);
+  document.getElementById('text').value = '';
+  load();
+}
+load();
+</script>
+</body>
+</html>
